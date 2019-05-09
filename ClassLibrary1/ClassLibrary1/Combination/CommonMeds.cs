@@ -46,11 +46,13 @@ namespace ClassLibrary1
 
         public List<string> Print()
         {
-            List<string> commonMeds = new List<string>();
-            List<string> incomplete = new List<string>();
+            List<string> allCommonMeds = new List<string>();
 
             foreach(var purpose in GetFileNames())
             {
+                List<string> commonMeds = new List<string>();
+                List<string> incomplete = new List<string>();
+
                 var purposeTypes = GetTypes().Where(t => t.Name.Contains(purpose));
                 var creativeType = purposeTypes.Where(t => t.Name.Contains("Creative")).First().UnderlyingSystemType;
                 var substem = purposeTypes.Where(t => t.Name.Contains("Substem"));
@@ -90,9 +92,11 @@ namespace ClassLibrary1
                     commonMeds[back] += incomplete[i];
                     back++;
                 }
+
+                allCommonMeds.AddRange(commonMeds);
             }
 
-            return commonMeds;
+            return allCommonMeds;
         }
 
         private List<string> MultiplyStem(int creativeCount, Type type)
