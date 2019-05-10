@@ -47,23 +47,43 @@ namespace ClassLibrary1
         public List<string> Print()
         {
             List<string> allCommonMeds = new List<string>();
+            bool duplicateAdded = false;
 
             foreach(var purpose in GetFileNames())
             {
                 List<string> commonMeds = new List<string>();
                 List<string> incomplete = new List<string>();
 
-                var purposeTypes = GetTypes().Where(t => t.Name.Contains(purpose));
+                var purposeTypes = GetTypes().Where(t => t.Name.Contains(purpose)).ToList();
+
+                if (duplicateAdded && purposeTypes.Where(t => t.Name.Contains("II")).FirstOrDefault() != null)
+                {
+                }
+                else
+                {
+                    if (purposeTypes.Where(t => t.Name.Contains("II")).FirstOrDefault() == null) { }
+                    else
+                    {
+                        duplicateAdded = true;
+                        purposeTypes.RemoveAll(t => t.Name.Contains("II"));
+                    }
+                }
 
                 var prefix = purposeTypes.Where(t => t.Name.Contains("Prefix")).FirstOrDefault();
 
                 var creativeType = purposeTypes.Where(t => t.Name.Contains("Creative")).First().UnderlyingSystemType;
 
+                var root = purposeTypes.Where(t => t.Name.Contains("Root")).FirstOrDefault();
+
                 var substem = purposeTypes.Where(t => t.Name.Contains("Substem"));
 
                 var stem = purposeTypes.Where(t => t.Name.Contains("Stem")).FirstOrDefault();
 
+                var suffix = purposeTypes.Where(t => t.Name.Contains("Suffix")).FirstOrDefault();
+
                 var creativeTypeValues = Enum.GetValues(creativeType);
+
+                var creativeTypeValuesLength = creativeTypeValues.Length;
 
                 if (prefix == null)
                 {
@@ -80,6 +100,16 @@ namespace ClassLibrary1
                     incomplete.Add(creative.ToString());
                 }
 
+                if (root == null)
+                {
+
+                }
+                else
+                {
+                    incomplete.AddRange(
+                    MultiplyIdentifier(creativeTypeValuesLength, root.UnderlyingSystemType));
+                }
+
                 if (substem.FirstOrDefault() == null)
                 {
 
@@ -89,14 +119,27 @@ namespace ClassLibrary1
 
                 }
 
-                if (stem == null)
+                //introduced suffix might be a stem
+                if (stem == null && suffix == null)
                 {
 
                 }
-                else
+                else if (stem != null && suffix != null)
+                {
+                    var creativeCount = creativeTypeValuesLength;
+                    foreach (var suffixTypeValues in Enum.GetValues(suffix.UnderlyingSystemType))
+                    {
+                        incomplete.Add(suffixTypeValues.ToString());
+                        creativeCount--;
+                    }
+
+                    incomplete.AddRange(
+                    MultiplyIdentifier(creativeCount, stem.UnderlyingSystemType));
+                }
+                else if (stem != null && suffix == null)
                 {
                     incomplete.AddRange(
-                    MultiplyIdentifier(creativeTypeValues.Length, stem.UnderlyingSystemType));
+                    MultiplyIdentifier(creativeTypeValuesLength, stem.UnderlyingSystemType));
                 }
 
                 int back = 0;
@@ -107,9 +150,9 @@ namespace ClassLibrary1
                     {
                         commonMeds.Add("");
                     }
-                    else if ((back + 1) % creativeTypeValues.Length != 0)
+                    else if ((back + 1) % creativeTypeValuesLength != 0)
                     {
-                        if (back < creativeTypeValues.Length) { }
+                        if (back < creativeTypeValuesLength) { }
                         else { back = 0; }
                     }
                     commonMeds[back] += incomplete[i];
@@ -144,6 +187,10 @@ namespace ClassLibrary1
                 }
             }
             return stems;
+        }
+        private int CountValues(Type type)
+        {
+            return Enum.GetValues(type).Length;
         }
     }
 }
