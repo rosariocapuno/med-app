@@ -7,14 +7,20 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            Combination combination = new Combination();
+            CancerTargetedTherapy cancerTargetedTherapy = new CancerTargetedTherapy();
+            CommonMeds commonMeds = new CommonMeds();
 
-            foreach (var item in combination.PrintCancerTargetTherapy())
+            foreach (var item in commonMeds.Print())
             {
                 Console.WriteLine(item);
             }
 
-            foreach (var item in combination.PrintCancerInhibitorTherapy())
+            foreach (var item in cancerTargetedTherapy.PrintCancerTargetTherapy())
+            {
+                Console.WriteLine(item);
+            }
+
+            foreach (var item in cancerTargetedTherapy.PrintCancerInhibitorTherapy())
             {
                 Console.WriteLine(item);
             }

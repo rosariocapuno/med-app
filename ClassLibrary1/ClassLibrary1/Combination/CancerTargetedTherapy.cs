@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ClassLibrary1
 {
-    public class Combination
+    public class CancerTargetedTherapy
     {
         public List<string> PrintCancerTargetTherapy()
         {
@@ -20,7 +20,7 @@ namespace ClassLibrary1
                 incomplete.Add(monoclonalAntibodyTarget.ToString().Substring(0,2));
             }
 
-            foreach (var monoclonalAntibodySubStem in Enum.GetValues(typeof(MonoclonalAntibodySubStem)))
+            foreach (var monoclonalAntibodySubStem in Enum.GetValues(typeof(MonoclonalAntibodySubstem)))
             {
                 incomplete.Add(monoclonalAntibodySubStem.ToString().Substring(0, 2));
             }

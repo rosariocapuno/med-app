@@ -3,7 +3,7 @@
     mab
 }
 
-public enum MonoclonalAntibodySubStem
+public enum MonoclonalAntibodySubstem
 {
       xi_chimeric_human_mouse
     , zu_humanized_mouse_drugs
