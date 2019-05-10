@@ -54,11 +54,27 @@ namespace ClassLibrary1
                 List<string> incomplete = new List<string>();
 
                 var purposeTypes = GetTypes().Where(t => t.Name.Contains(purpose));
+
+                var prefix = purposeTypes.Where(t => t.Name.Contains("Prefix")).FirstOrDefault();
+
                 var creativeType = purposeTypes.Where(t => t.Name.Contains("Creative")).First().UnderlyingSystemType;
+
                 var substem = purposeTypes.Where(t => t.Name.Contains("Substem"));
-                var stemType = purposeTypes.Where(t => t.Name.Contains("Stem")).First().UnderlyingSystemType;
+
+                var stem = purposeTypes.Where(t => t.Name.Contains("Stem")).FirstOrDefault();
 
                 var creativeTypeValues = Enum.GetValues(creativeType);
+
+                if (prefix == null)
+                {
+
+                }
+                else
+                {
+                    incomplete.AddRange(
+                        MultiplyIdentifier(creativeTypeValues.Length, prefix.UnderlyingSystemType));
+                }
+
                 foreach (var creative in creativeTypeValues)
                 {
                     incomplete.Add(creative.ToString());
@@ -73,8 +89,15 @@ namespace ClassLibrary1
 
                 }
 
-                incomplete.AddRange(
-                    MultiplyStem(creativeTypeValues.Length, stemType));
+                if (stem == null)
+                {
+
+                }
+                else
+                {
+                    incomplete.AddRange(
+                    MultiplyIdentifier(creativeTypeValues.Length, stem.UnderlyingSystemType));
+                }
 
                 int back = 0;
 
@@ -90,6 +113,12 @@ namespace ClassLibrary1
                         else { back = 0; }
                     }
                     commonMeds[back] += incomplete[i];
+
+                    if (commonMeds[back].IndexOf("_") > -1)
+                    {
+                        commonMeds[back] = Exemption(commonMeds[back]);
+                    }
+
                     back++;
                 }
 
@@ -99,7 +128,12 @@ namespace ClassLibrary1
             return allCommonMeds;
         }
 
-        private List<string> MultiplyStem(int creativeCount, Type type)
+        private string Exemption(string wrongSpelling)
+        {
+            return wrongSpelling.Replace("_", "").Replace("f", "ph");
+        }
+
+        private List<string> MultiplyIdentifier(int creativeCount, Type type)
         {
             List<string> stems = new List<string>();
             for (int i = 0; i < creativeCount; i++)
